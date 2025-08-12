@@ -18,16 +18,18 @@ Supports **desktop notifications** and **email alerts** for maximum flexibility.
 ---
 
 ## 📂 Project Structure
-deltalert/  
-│── alerts.json # Stores your alerts for different pairs  
-│── alerts.log # Stores triggered alerts 
-│── config.py # Config values (WebSocket URL)  
-│── ws_client.py # Main WebSocket client script  
-│── alerts.py # Functions to load & manage alerts  
-│── notifications.py # Functions to send desktop/email alerts  
-│── requirements.txt # Dependencies  
-│── README.md # Documentation  
-│── .env # Environment variables (email credentials)
+```plaintext
+deltalert/
+├── alerts.json         # Stores your alerts for different pairs
+├── alerts.log          # Stores triggered alerts
+├── config.py           # Config values (WebSocket URL)
+├── ws_client.py        # Main WebSocket client script
+├── alerts.py           # Functions to load & manage alerts
+├── notifications.py    # Functions to send desktop/email alerts
+├── requirements.txt    # Dependencies
+├── README.md           # Documentation
+└── .env                # Environment variables (email credentials)
+```
 
 ---
 
