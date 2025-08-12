@@ -19,6 +19,14 @@ def get_args():
 
 args = get_args()
 
+# Load alerts from JSON file
+alerts = []
+if os.path.exists("alerts.json"):
+    with open("alerts.json") as f:
+        alerts = json.load(f)
+
+triggered_alerts = set()  # To prevent repeated triggers
+
 # Load env variables
 load_dotenv()
 
@@ -31,49 +39,67 @@ WS_URL = "wss://socket.delta.exchange"
 async def price_alert():
     async with websockets.connect(WS_URL) as ws:
         # Subscribe to ticker for given symbol
+        subscribed_symbols = list({SYMBOL} | {a["symbol"] for a in alerts})
         subscribe_message = {
             "type": "subscribe",
             "payload": {
                 "channels": [
                     {
                         "name": "v2/ticker",
-                        "symbols": [SYMBOL]
+                        "symbols": subscribed_symbols
                     }
                 ]
             }
         }
         await ws.send(json.dumps(subscribe_message))
-        print(f"Subscribed to {SYMBOL} ticker. Waiting for price updates...")
+        print(f"Subscribed to {', '.join(subscribed_symbols)} ticker. Waiting for price updates...")
 
         async for message in ws:
             data = json.loads(message)
 
             # Filter ticker data
             if data.get("type") == "v2/ticker":
+                symbol = data["symbol"]
                 mark_price = float(data["mark_price"])
-                print(f"{SYMBOL} price: {mark_price}")
+                print(f"{symbol} price: {mark_price}")
 
-                if TARGET_HIGH and mark_price >= TARGET_HIGH:
-                    send_alert(f"High target hit: {mark_price} >= {TARGET_HIGH}")
-                    break  # stop after alert for now
-                if TARGET_LOW and mark_price <= TARGET_LOW:
-                    send_alert(f"Low target hit: {mark_price} <= {TARGET_LOW}")
-                    break  # stop after alert
+                # ----CLI/ENV alerts-------
+                if symbol == SYMBOL:
+                    if TARGET_HIGH and mark_price >= TARGET_HIGH:
+                        send_alert(f"High target hit: {mark_price} >= {TARGET_HIGH}")
+                    if TARGET_LOW and mark_price <= TARGET_LOW:
+                        send_alert(f"Low target hit: {mark_price} <= {TARGET_LOW}")
+              
+                for alert in alerts:
+                    key = (alert["symbol"], alert["type"], alert["value"])
+                    if key in triggered_alerts:
+                        continue
 
-def send_alert(message):
+                    if alert["symbol"] == symbol:
+                        if alert["type"] == "gte" and mark_price >= alert["value"]:
+                            send_alert(f"[JSON] {symbol} >= {alert['value']} (Current: {mark_price})", symbol)
+                            triggered_alerts.add(key)
+                            alerts.remove[alert]
+                        elif alert["type"] == "lte" and mark_price <= alert["value"]:
+                            send_alert(f"[JSON] {symbol} <= {alert['value']} (Current: {mark_price})", symbol)
+                            triggered_alerts.add(key)
+                            alerts.remove[alert]
+
+ 
+def send_alert(message,symbol):
     """Send desktop notification and log to file."""
     notification.notify(
         title="Price Alert",
         message=message,
         timeout=5
     )
-    log_alert(message)
+    log_alert(message,symbol)
     print(message)
 
-def log_alert(message):
+def log_alert(message,symbol):
     """Append alert message to alerts.log with timestamp."""
     with open("alerts.log", "a") as f:
-        f.write(f"{datetime.now()} - {SYMBOL} - {message}\n")
+        f.write(f"{datetime.now()} - {symbol} - {message}\n")
 
 if __name__ == "__main__":
     asyncio.run(price_alert())

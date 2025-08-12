@@ -1,0 +1,5 @@
+[
+  { "symbol": "BTCUSD", "type": "gte", "value": 119100 },
+  { "symbol": "ETHUSD", "type": "gte", "value": 4305 }
+]
+
