@@ -29,6 +29,8 @@ deltalert/
 ├── requirements.txt    # Dependencies
 ├── README.md           # Documentation
 └── .env                # Environment variables (email credentials)
+└── assets              # media storage
+
 ```
 
 ---
