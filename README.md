@@ -30,6 +30,7 @@ deltalert/
 │── .env # Environment variables (email credentials)
 
 ---
+
 ## ⚙️ Installation
 
 **1️⃣ Clone the repository:**
@@ -55,7 +56,13 @@ pip install -r requirements.txt
 EMAIL_USER=your_email@example.com
 EMAIL_PASSWORD=your_email_password
 ```
+5️⃣ Run the alert service
+```bash
+python ws_client.py
+```
+
+---
 
 📸 Example Output
 
-![[output.png]]
+![output.png](/assets/output.png)
