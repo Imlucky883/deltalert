@@ -63,6 +63,6 @@ python ws_client.py
 
 ---
 
-📸 Example Output
+## 📸 Example Output
 
 ![output.png](/assets/output.png)
