@@ -24,7 +24,7 @@ async def price_alert():
                 "channels": [
                     {
                         "name": "v2/ticker",
-                        "symbols": "all"
+                        "symbols": subscribed_symbols
                     }
                 ]
             }
@@ -52,6 +52,7 @@ async def price_alert():
                             send_desktop_alert(f"[JSON] {symbol} {comp} {alert['value']} (Current: {mark_price})", symbol)
                             body = build_email_body(symbol, alert["type"], alert["value"], mark_price)
                             send_email(f"Alert Triggered for {symbol}", body, EMAIL_USER)
+                            print(f"[ALERT]: Alert sent to your {EMAIL_USER} successfully")
                             remove_alert(alert, alerts)
 if __name__ == "__main__":
     asyncio.run(price_alert())

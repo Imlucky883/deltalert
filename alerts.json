@@ -1,7 +1,1 @@
-
-[
-  { "symbol": "BTCUSD", "type": "gte", "value": 123000 },
-  { "symbol": "BTCUSD", "type": "lte", "value": 120000 },
-  { "symbol": "ETHUSD", "type": "gte", "value": 4300 },
-  { "symbol": "ETHUSD", "type": "lte", "value": 4500 }
-]
+[]
